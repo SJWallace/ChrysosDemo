@@ -82,12 +82,7 @@ Grafana dashboards visualize the analytics models from PostgreSQL.
    docker-compose up -d
    ```
 
-4. Initialize the database (first time only):
-   ```
-   docker-compose exec postgres psql -U chrysosdemo -d chrysosdemo -f /var/lib/postgresql/data/create_tables.sql
-   ```
-
-5. Run dbt models:
+4. Run dbt models:
    ```
    docker-compose exec dbt dbt run
    ```

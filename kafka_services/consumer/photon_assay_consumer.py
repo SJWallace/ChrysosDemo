@@ -77,16 +77,16 @@ while True:
 
         # Map assay to device
         cur.execute(
-            "INSERT INTO photon_assay_device_mapping (assay_id, device_id) VALUES (%s, %s)",
-            (data['assay_id'], data['device']['device_id'])
+            "INSERT INTO photon_assay_device_mapping (assay_id, timestamp, device_id) VALUES (%s, %s, %s)",
+            (data['assay_id'], data['timestamp'], data['device']['device_id'])
         )
 
         # Insert spectrum data
         for i, energy in enumerate(data['spectrum']['energy_keV']):
             intensity = data['spectrum']['intensity'][i]
             cur.execute(
-                "INSERT INTO photon_assay_spectra (assay_id, energy_kev, intensity) VALUES (%s, %s, %s)",
-                (data['assay_id'], energy, intensity)
+                "INSERT INTO photon_assay_spectra (assay_id, timestamp, energy_kev, intensity) VALUES (%s, %s, %s, %s)",
+                (data['assay_id'], data['timestamp'], energy, intensity)
             )
 
         conn.commit()
