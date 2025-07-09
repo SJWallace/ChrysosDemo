@@ -3,14 +3,32 @@ from datetime import datetime, timedelta
 from confluent_kafka import Producer
 import uuid
 
-DEVICE_INFO = {
-    "device_id": "CHRYSOS001",
-    "device_type": "PhotonAssay9000",
-    "location": "Site Alpha",
-    "calibration_date": (datetime.now() - timedelta(days=random.randint(0,60))).strftime('%Y-%m-%d'),
-    "firmware_version": "1.2.3",
-    "status": "operational"
-}
+def generate_device_id():
+    # Generate a device ID in the format CHRYSOS followed by a 3-digit number
+    return f"CHRYSOS{random.randint(1, 50):03d}"
+
+def generate_location():
+    # Generate a realistic site location
+    site_prefixes = ["Site", "Mine", "Lab", "Facility", "Plant"]
+    site_names = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Omega", "North", "South", "East", "West", "Central"]
+    return f"{random.choice(site_prefixes)} {random.choice(site_names)}"
+
+def generate_firmware_version():
+    # Generate a semantic version number (major.minor.patch)
+    major = random.randint(1, 1)
+    minor = random.randint(0, 15)
+    patch = random.randint(0, 30)
+    return f"{major}.{minor}.{patch}"
+
+def get_device_info():
+    return {
+        "device_id": generate_device_id(),
+        "device_type": "PhotonAssay9000",
+        "location": generate_location(),
+        "calibration_date": (datetime.now() - timedelta(days=random.randint(0,60))).strftime('%Y-%m-%d'),
+        "firmware_version": generate_firmware_version(),
+        "status": "operational"
+    }
 
 ENERGY_BINS = [round(1.0 + 0.1*i, 1) for i in range(0, 391)]  # 1.0 to 40.0 keV in 0.1 steps
 
@@ -36,7 +54,7 @@ def send_instrument_packet():
     data = {
         "assay_id": f"ASSAY{uuid.uuid4().hex[:8].upper()}",
         "timestamp": datetime.utcnow().isoformat() + "Z",
-        "device": DEVICE_INFO,
+        "device": get_device_info(),
         "spectrum": {
             "energy_keV": ENERGY_BINS,
             "intensity": generate_spectrum()

@@ -55,7 +55,7 @@ services:
       context: ./kafka_services
     volumes:
       - ./kafka_services/producer:/app
-    command: python kafkaproducer.py
+    command: python sim_Temperature.py
     depends_on:
       - kafka
     restart: on-failure
@@ -78,7 +78,7 @@ services:
       context: ./kafka_services
     volumes:
       - ./kafka_services/consumer:/app
-    command: python kafkaconsumer.py
+    command: python temperature_consumer.py
     depends_on:
       - kafka
       - postgres
