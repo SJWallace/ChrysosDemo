@@ -1,0 +1,4 @@
+sources:
+  - name: public    # This should match your schema name (probably 'public')
+    tables:
+      - name: raw_sensor_data

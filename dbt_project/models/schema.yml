@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: sensor_analytics
+    description: "Analytics on sensor data, showing average temperature by sensor and hour"
+    columns:
+      - name: sensor_id
+        description: "Unique identifier for the sensor"
+      - name: hour
+        description: "Hour of the measurement (truncated timestamp)"
+      - name: avg_temp
+        description: "Average temperature for the sensor during that hour"
+
+  - name: photon_assay_analytics
+    description: "Comprehensive analytics on photon assay data, combining event, device, and spectrum statistics"
+    columns:
+      - name: day
+        description: "Day of the assay (truncated timestamp)"
+      - name: status
+        description: "Status of the assay (ok, warning, fail)"
+      - name: assay_count
+        description: "Number of assays with this status on this day"
+      - name: device_id
+        description: "Unique identifier for the device"
+      - name: device_type
+        description: "Type of the device"
+      - name: location
+        description: "Location of the device"
+      - name: total_assays
+        description: "Total number of assays performed by this device"
+      - name: last_used
+        description: "Timestamp when the device was last used"
+      - name: avg_energy
+        description: "Average energy level (keV) for the assay"
+      - name: max_energy
+        description: "Maximum energy level (keV) for the assay"
+      - name: min_energy
+        description: "Minimum energy level (keV) for the assay"
+      - name: avg_intensity
+        description: "Average intensity for the assay"
+      - name: max_intensity
+        description: "Maximum intensity for the assay"
+
+  - name: photon_assay_daily_report
+    description: "Simple daily report of photon assay activity"
+    columns:
+      - name: day
+        description: "Day of the assay (truncated timestamp)"
+      - name: status
+        description: "Status of the assay (ok, warning, fail)"
+      - name: assay_count
+        description: "Number of assays with this status on this day"
+      - name: devices_used
+        description: "Number of distinct devices used for assays on this day with this status"
+      - name: locations
+        description: "Comma-separated list of locations where assays were performed on this day with this status"
+
+  - name: photon_assay_spectrum_analysis
+    description: "Detailed analysis of spectrum data from photon assays"
+    columns:
+      - name: assay_id
+        description: "Unique identifier for the assay"
+      - name: timestamp
+        description: "Timestamp when the assay was performed"
+      - name: status
+        description: "Status of the assay (ok, warning, fail)"
+      - name: device_id
+        description: "Unique identifier for the device"
+      - name: device_type
+        description: "Type of the device"
+      - name: location
+        description: "Location of the device"
+      - name: energy_range
+        description: "Categorized energy range (Low, Medium, High, Very High)"
+      - name: measurement_count
+        description: "Number of measurements in this energy range for this assay"
+      - name: avg_energy
+        description: "Average energy level (keV) in this range for this assay"
+      - name: avg_intensity
+        description: "Average intensity in this range for this assay"
+      - name: peak_intensity
+        description: "Maximum intensity in this range for this assay"
+      - name: total_intensity
+        description: "Sum of all intensities in this range for this assay"

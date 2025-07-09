@@ -1,0 +1,15 @@
+@startuml
+actor Producer
+rectangle "Kafka" as Kafka
+rectangle "Consumer Script" as Consumer
+database "PostgreSQL" as PostgreSQL
+folder "dbt (PostgreSQL adapter)" as dbt
+rectangle "Grafana" as Grafana
+
+Producer -right-> Kafka : Writes messages
+Kafka -down-> Consumer : Reads events
+Consumer -down-> PostgreSQL : INSERTs batch data
+PostgreSQL -down-> dbt : Transforms/aggregates
+dbt -down-> PostgreSQL : Analytics models
+PostgreSQL -down-> Grafana : Dashboards
+@enduml

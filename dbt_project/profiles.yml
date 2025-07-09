@@ -1,0 +1,11 @@
+chrysosdemo:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      user: chrysosdemo
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      port: 5432
+      dbname: chrysosdemo
+      schema: public

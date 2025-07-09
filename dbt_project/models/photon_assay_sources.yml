@@ -1,0 +1,46 @@
+sources:
+  - name: public    # This should match your schema name (probably 'public')
+    tables:
+      - name: photon_assay_events
+        description: "Table for storing photon assay events"
+        columns:
+          - name: assay_id
+            description: "Unique identifier for the assay"
+          - name: timestamp
+            description: "Timestamp when the assay was performed"
+          - name: status
+            description: "Status of the assay (ok, warning, fail)"
+            
+      - name: photon_assay_devices
+        description: "Table for storing photon assay device information"
+        columns:
+          - name: device_id
+            description: "Unique identifier for the device"
+          - name: device_type
+            description: "Type of the device"
+          - name: location
+            description: "Location of the device"
+          - name: calibration_date
+            description: "Date when the device was last calibrated"
+          - name: firmware_version
+            description: "Version of the firmware running on the device"
+          - name: status
+            description: "Status of the device"
+            
+      - name: photon_assay_device_mapping
+        description: "Table for storing the relationship between assays and devices"
+        columns:
+          - name: assay_id
+            description: "Reference to the assay_id in photon_assay_events"
+          - name: device_id
+            description: "Reference to the device_id in photon_assay_devices"
+            
+      - name: photon_assay_spectra
+        description: "Table for storing spectrum data"
+        columns:
+          - name: assay_id
+            description: "Reference to the assay_id in photon_assay_events"
+          - name: energy_kev
+            description: "Energy level in keV"
+          - name: intensity
+            description: "Intensity value for the given energy level"

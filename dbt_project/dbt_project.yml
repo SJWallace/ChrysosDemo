@@ -1,0 +1,7 @@
+name: 'chrysosdemo'
+version: '1.0.0'
+profile: 'chrysosdemo'
+
+model-paths: ["models"]
+
+# Optionally, other dbt settings

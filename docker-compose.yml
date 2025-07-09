@@ -1,0 +1,106 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  dbt:
+      image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
+      volumes:
+        - ./dbt_project:/usr/app
+        - ~/.dbt_project:/root/.dbt
+      working_dir: /usr/app
+      entrypoint: ["tail", "-f", "/dev/null"]
+
+  postgres:
+    image: postgres:17.5
+    environment:
+      POSTGRES_USER: chrysosdemo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: chrysosdemo
+    ports:
+      - "54321:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  kafka-producer_temp:
+    build:
+      context: ./kafka_services
+    volumes:
+      - ./kafka_services/producer:/app
+    command: python kafkaproducer.py
+    depends_on:
+      - kafka
+    restart: on-failure
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  kafka-producer_photon_assay:
+    build:
+      context: ./kafka_services
+    volumes:
+      - ./kafka_services/producer:/app
+    command: python sim_PhotonAssay.py
+    depends_on:
+      - kafka
+    restart: on-failure
+
+
+  kafka-consumer_temp:
+    build:
+      context: ./kafka_services
+    volumes:
+      - ./kafka_services/consumer:/app
+    command: python kafkaconsumer.py
+    depends_on:
+      - kafka
+      - postgres
+    restart: on-failure
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PYTHONUNBUFFERED=1
+
+  kafka-consumer_photon_assay:
+    build:
+      context: ./kafka_services
+    volumes:
+      - ./kafka_services/consumer:/app
+    command: python photon_assay_consumer.py
+    depends_on:
+      - kafka
+      - postgres
+    restart: on-failure
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  grafana-data:
+  postgres-data:
