@@ -39,6 +39,8 @@ services:
         - ./dbt_project:/usr/app
         - ~/.dbt_project:/root/.dbt
       working_dir: /usr/app
+      environment:
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       entrypoint: ["tail", "-f", "/dev/null"]
       depends_on:
         postgres:
@@ -74,6 +76,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./grafana/dashboards/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 10s

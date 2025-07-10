@@ -1,0 +1,259 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 5,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "aereqgapxedc0b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 18,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "-- 1. Find the most recent assay_id\r\nWITH most_recent_assay AS (\r\n  SELECT assay_id\r\n  FROM photon_assay_spectra\r\n  WHERE timestamp = (SELECT MAX(timestamp) FROM photon_assay_spectra)\r\n  LIMIT 1\r\n),\r\n-- 2. Find the device mapping for that assay_id\r\ndevice_mapping AS (\r\n  SELECT *\r\n  FROM photon_assay_device_mapping pam\r\n  WHERE pam.assay_id = (SELECT assay_id FROM most_recent_assay)\r\n  ORDER BY pam.timestamp DESC\r\n  LIMIT 1\r\n)\r\n-- 3. Get all spectra rows for that assay_id, plus device metadata\r\nSELECT\r\n  pas.assay_id,\r\n  pas.timestamp AS spectrum_timestamp,\r\n  d.device_id,\r\n  d.device_type,\r\n  d.location,\r\n  d.calibration_date,\r\n  d.firmware_version,\r\n  d.status\r\nFROM photon_assay_spectra pas\r\nJOIN most_recent_assay mra ON pas.assay_id = mra.assay_id\r\nJOIN device_mapping dm ON pas.assay_id = dm.assay_id\r\nJOIN photon_assay_devices d ON dm.device_id = d.device_id\r\nLIMIT 1",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "New panel",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "aereqgapxedc0b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 39,
+            "axisSoftMin": 0,
+            "fillOpacity": 50,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "pointShape": "circle",
+            "pointSize": {
+              "fixed": 5
+            },
+            "pointStrokeWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "show": "lines"
+          },
+          "fieldMinMax": true,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 18,
+        "x": 0,
+        "y": 4
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mapping": "auto",
+        "series": [
+          {
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "energy_kev"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "intensity"
+              }
+            }
+          }
+        ],
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "aereqgapxedc0b"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "WITH most_recent_assay AS (\r\n  SELECT assay_id\r\n  FROM photon_assay_spectra\r\n  WHERE timestamp = (SELECT MAX(timestamp) FROM photon_assay_spectra)\r\n  LIMIT 1\r\n),\r\ndevice_mapping AS (\r\n  SELECT *\r\n  FROM photon_assay_device_mapping pam\r\n  WHERE pam.assay_id = (SELECT assay_id FROM most_recent_assay)\r\n  ORDER BY pam.timestamp DESC\r\n  LIMIT 1\r\n)\r\nSELECT\r\n  pas.assay_id,\r\n  pas.timestamp AS spectrum_timestamp,\r\n  pas.energy_kev,\r\n  pas.intensity,\r\n  d.device_id,\r\n  d.device_type,\r\n  d.location,\r\n  d.calibration_date,\r\n  d.firmware_version,\r\n  d.status\r\nFROM photon_assay_spectra pas\r\nJOIN most_recent_assay mra ON pas.assay_id = mra.assay_id\r\nJOIN device_mapping dm ON pas.assay_id = dm.assay_id\r\nJOIN photon_assay_devices d ON dm.device_id = d.device_id\r\nORDER BY pas.energy_kev;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "photon_assay_spectra"
+        }
+      ],
+      "title": "Photon Assay Spectrum",
+      "type": "xychart"
+    }
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "ASSAYFE48482E",
+          "value": "ASSAYFE48482E"
+        },
+        "definition": "SELECT DISTINCT assay_id FROM photon_assay_spectra ORDER BY assay_id DESC\n",
+        "name": "assay_id",
+        "options": [],
+        "query": "SELECT DISTINCT assay_id FROM photon_assay_spectra ORDER BY assay_id DESC\n",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Photon Assay Spectrum",
+  "uid": "photon-spectrum",
+  "version": 2
+}
