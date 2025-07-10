@@ -5,8 +5,8 @@ WORKDIR /app
 # Install dependencies
 RUN pip install confluent-kafka psycopg2-binary
 
-# Copy application code
-COPY ./ /app/
+# Create directories for volume mounts
+RUN mkdir -p /app/producer /app/consumer
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

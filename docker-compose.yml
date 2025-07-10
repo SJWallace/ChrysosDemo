@@ -77,7 +77,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
-      - ./grafana/dashboards/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 10s
@@ -89,7 +89,7 @@ services:
       context: ./kafka_services
     volumes:
       - ./kafka_services/producer:/app/producer
-    command: python producer/sim_Temperature.py
+    command: python /app/producer/sim_Temperature.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -107,7 +107,7 @@ services:
       context: ./kafka_services
     volumes:
       - ./kafka_services/producer:/app/producer
-    command: python producer/sim_PhotonAssay.py
+    command: python /app/producer/sim_PhotonAssay.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -126,7 +126,7 @@ services:
       context: ./kafka_services
     volumes:
       - ./kafka_services/consumer:/app/consumer
-    command: python consumer/temperature_consumer.py
+    command: python /app/consumer/temperature_consumer.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -147,7 +147,7 @@ services:
       context: ./kafka_services
     volumes:
       - ./kafka_services/consumer:/app/consumer
-    command: python consumer/photon_assay_consumer.py
+    command: python /app/consumer/photon_assay_consumer.py
     depends_on:
       kafka:
         condition: service_healthy
