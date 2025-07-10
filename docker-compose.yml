@@ -87,8 +87,6 @@ services:
   kafka-producer_temp:
     build:
       context: ./kafka_services
-    volumes:
-      - ./kafka_services/producer:/app/producer
     command: python /app/producer/sim_Temperature.py
     depends_on:
       kafka:
@@ -105,8 +103,6 @@ services:
   kafka-producer_photon_assay:
     build:
       context: ./kafka_services
-    volumes:
-      - ./kafka_services/producer:/app/producer
     command: python /app/producer/sim_PhotonAssay.py
     depends_on:
       kafka:
@@ -124,8 +120,6 @@ services:
   kafka-consumer_temp:
     build:
       context: ./kafka_services
-    volumes:
-      - ./kafka_services/consumer:/app/consumer
     command: python /app/consumer/temperature_consumer.py
     depends_on:
       kafka:
@@ -145,8 +139,6 @@ services:
   kafka-consumer_photon_assay:
     build:
       context: ./kafka_services
-    volumes:
-      - ./kafka_services/consumer:/app/consumer
     command: python /app/consumer/photon_assay_consumer.py
     depends_on:
       kafka:
