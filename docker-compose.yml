@@ -37,7 +37,7 @@ services:
       image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
       volumes:
         - ./dbt_project:/usr/app
-        - ~/.dbt_project:/root/.dbt
+        - dbt-config:/root/.dbt
       working_dir: /usr/app
       environment:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -88,8 +88,8 @@ services:
     build:
       context: ./kafka_services
     volumes:
-      - ./kafka_services/producer:/app
-    command: python sim_Temperature.py
+      - ./kafka_services/producer:/app/producer
+    command: python producer/sim_Temperature.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -106,8 +106,8 @@ services:
     build:
       context: ./kafka_services
     volumes:
-      - ./kafka_services/producer:/app
-    command: python sim_PhotonAssay.py
+      - ./kafka_services/producer:/app/producer
+    command: python producer/sim_PhotonAssay.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -125,8 +125,8 @@ services:
     build:
       context: ./kafka_services
     volumes:
-      - ./kafka_services/consumer:/app
-    command: python temperature_consumer.py
+      - ./kafka_services/consumer:/app/consumer
+    command: python consumer/temperature_consumer.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -146,8 +146,8 @@ services:
     build:
       context: ./kafka_services
     volumes:
-      - ./kafka_services/consumer:/app
-    command: python photon_assay_consumer.py
+      - ./kafka_services/consumer:/app/consumer
+    command: python consumer/photon_assay_consumer.py
     depends_on:
       kafka:
         condition: service_healthy
@@ -166,3 +166,4 @@ services:
 volumes:
   grafana-data:
   postgres-data:
+  dbt-config:
