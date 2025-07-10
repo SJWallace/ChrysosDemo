@@ -16,6 +16,8 @@ The project showcases a complete data engineering pipeline using modern technolo
 Producer → Kafka → Consumer → PostgreSQL → dbt → PostgreSQL → Grafana
 ```
 
+![demo architecture diagram](demo_architecture.png)
+
 1. **Producers** simulate photon assay devices generating spectral data
 2. **Kafka** handles the streaming data pipeline
 3. **Consumers** process the data and store it in PostgreSQL
