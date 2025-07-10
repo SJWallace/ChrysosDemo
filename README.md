@@ -150,6 +150,3 @@ To extend the project:
 4. Create new dbt models in `dbt_project/models/`
 5. Configure new Grafana dashboards
 
-## License
-
-[Specify license information]
